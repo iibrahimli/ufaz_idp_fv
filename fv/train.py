@@ -93,8 +93,9 @@ for epoch in range(start_epoch, end_epoch):
 
     # Training pass
     model.train()
+    pbar = tqdm(train_dataloader)
 
-    for batch_idx, (batch_sample) in enumerate(train_dataloader):
+    for batch_idx, (batch_sample) in enumerate(pbar):
         
         batch_loss_sum = 0
 
@@ -136,13 +137,20 @@ for epoch in range(start_epoch, end_epoch):
         batch_loss.backward()
         opt.step()
 
-        if batch_idx % 100 == 0:
-            print('Epoch {} batch {}:\tavg batch loss: {:.4f}'.format(
-                    epoch+1,
-                    batch_idx,
-                    batch_loss_sum / cfg.BATCH_SIZE,
+
+        if batch_idx % 10 == 0:
+            pbar.set_description("epoch {} - batch {} - loss {:.5f}".format(
+                epoch+1,
+                batch_idx,
+                batch_loss_sum / cfg.BATCH_SIZE
                 )
             )
+            # print('Epoch {} batch {}:\tavg batch loss: {:.4f}'.format(
+            #         epoch+1,
+            #         batch_idx,
+            #         batch_loss_sum / cfg.BATCH_SIZE,
+            #     )
+            # )
 
     # Model only trains on hard negative triplets
     avg_triplet_loss = 0 if (num_valid_training_triplets == 0) else epoch_loss_sum / num_valid_training_triplets
