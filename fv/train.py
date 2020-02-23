@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from os.path import join, isfile
 import numpy as np
 import torch
@@ -71,8 +70,6 @@ if cfg.RESUME_PATH is not None:
         print("WARNING: No checkpoint found at {}, training from scratch".format(cfg.RESUME_PATH))
 
 
-dt = datetime.now()
-dt_str = dt.strftime("%d-%m-%Y_%H-%M-%S")
 total_time_start = time.time()
 start_epoch = start_epoch
 end_epoch = start_epoch + cfg.N_EPOCHS
@@ -136,7 +133,6 @@ for epoch in range(start_epoch, end_epoch):
         opt.zero_grad()
         batch_loss.backward()
         opt.step()
-
 
         if batch_idx % 10 == 0:
             pbar.set_description("epoch {} - batch {} - loss {:.5f}".format(
