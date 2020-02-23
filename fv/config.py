@@ -18,12 +18,12 @@ TRAIN_CSV_PATH = join(DATASET_PATH, "train.csv")
 TEST_CSV_PATH  = join(DATASET_PATH, "test.csv")
 
 # triplets
-N_TRAIN_TRIPLETS    = 10000
+N_TRAIN_TRIPLETS    = 25000
 TRAIN_TRIPLETS_DIR  = join(DATASET_PATH, "triplets")
 TRAIN_TRIPLETS_PATH = join(TRAIN_TRIPLETS_DIR, "train_triplets.npy")
 makedirs(TRAIN_TRIPLETS_DIR, exist_ok=True)
 
-N_TEST_TRIPLETS     = 1000
+N_TEST_TRIPLETS     = 2500
 TEST_TRIPLETS_DIR   = join(DATASET_PATH, "triplets")
 TEST_TRIPLETS_PATH  = join(TEST_TRIPLETS_DIR, "test_triplets.npy")
 makedirs(TEST_TRIPLETS_DIR, exist_ok=True)
@@ -38,8 +38,8 @@ TRAINING_LOG_PATH = join(PROJECT_ROOT, "fv/model/logs")
 makedirs(TRAINING_LOG_PATH, exist_ok=True)
 
 # training params (ik it's a bad idea)
-IMG_SIZE       = (200, 200)
-BATCH_SIZE     = 8
+IMG_SIZE       = (160, 160)
+BATCH_SIZE     = 12
 N_EPOCHS       = 50
 INITIAL_LR     = 0.0001
 TRIPLET_MARGIN = 0.5

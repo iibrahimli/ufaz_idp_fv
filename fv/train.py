@@ -15,6 +15,7 @@ from fv.util import generate_csv, triplet_dataset
 
 if isfile(cfg.TRAIN_CSV_PATH) == False:
     generate_csv(cfg.DATASET_TRAIN_PATH, cfg.TRAIN_CSV_PATH)
+
 if isfile(cfg.TEST_CSV_PATH) == False:
     generate_csv(cfg.DATASET_TEST_PATH, cfg.TEST_CSV_PATH)
 
