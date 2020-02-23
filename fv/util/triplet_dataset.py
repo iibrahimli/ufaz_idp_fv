@@ -52,7 +52,7 @@ class triplet_dataset(Dataset):
         classes = df['class'].unique()
         face_classes = make_dictionary_for_face_class(df)
 
-        print("\nGenerating {} triplets...".format(num_triplets))
+        print("Generating {} triplets...".format(num_triplets))
 
         progress_bar = tqdm(range(num_triplets))
         for _ in progress_bar:

@@ -65,7 +65,7 @@ if cfg.RESUME_PATH is not None:
         opt.load_state_dict(checkpoint['opt_state_dict'])
 
         print("Checkpoint loaded: start epoch from checkpoint = {}".format(start_epoch))
-        print("Running for {} epochs.\n".format(cfg.N_EPOCHS - start_epoch))
+        print("Running for {} epochs".format(cfg.N_EPOCHS - start_epoch))
     else:
         print("WARNING: No checkpoint found at {}, training from scratch".format(cfg.RESUME_PATH))
 
@@ -87,14 +87,15 @@ print("Training on {} triplets for {} epochs".format(
 for epoch in range(start_epoch, end_epoch):
     epoch_time_start = time.time()
 
-    triplet_loss_sum = 0
+    epoch_loss_sum = 0
     num_valid_training_triplets = 0
 
     # Training pass
     model.train()
-    progress_bar = enumerate(tqdm(train_dataloader))
 
-    for batch_idx, (batch_sample) in progress_bar:
+    for batch_idx, (batch_sample) in enumerate(train_dataloader):
+        
+        batch_loss_sum = 0
 
         anc_img = batch_sample['anc_img'].cuda()
         pos_img = batch_sample['pos_img'].cuda()
@@ -125,7 +126,8 @@ for epoch in range(start_epoch, end_epoch):
         ).cuda()
 
         # Calculating loss
-        batch_loss += batch_loss.item()
+        batch_loss_sum += batch_loss.item()
+        epoch_loss_sum += batch_loss.item()
         num_valid_training_triplets += len(anc_hard_embedding)
 
         # Backward pass
@@ -133,8 +135,16 @@ for epoch in range(start_epoch, end_epoch):
         batch_loss.backward()
         opt.step()
 
+        if batch_idx % 100 == 0:
+            print('Epoch {} batch {}:\tavg batch loss: {:.4f}'.format(
+                    epoch+1,
+                    batch_idx,
+                    batch_loss_sum / cfg.BATCH_SIZE,
+                )
+            )
+
     # Model only trains on hard negative triplets
-    avg_triplet_loss = 0 if (num_valid_training_triplets == 0) else batch_loss / num_valid_training_triplets
+    avg_triplet_loss = 0 if (num_valid_training_triplets == 0) else epoch_loss_sum / num_valid_training_triplets
     epoch_time_end = time.time()
 
     # Print training statistics and add to log
@@ -151,20 +161,18 @@ for epoch in range(start_epoch, end_epoch):
             avg_triplet_loss,
             num_valid_training_triplets
         ]
-        log = '\t'.join(str(value) for value in val_list)
+        log = ';'.join(str(value) for value in val_list)
         f.writelines(log + '\n')
 
     # Save model checkpoint
     state = {
         'epoch': epoch+1,
-        'embedding_dimension': embedding_dimension,
-        'batch_size_training': batch_size,
+        'embedding_dimension': cfg.EMBEDDING_DIM,
+        'batch_size_training': cfg.BATCH_SIZE,
         'model_state_dict': model.state_dict(),
         'opt_state_dict': opt.state_dict()
     }
-
-    # Save model checkpoint
-    torch.save(state, 'Model_training_checkpoints/model_{}_triplet_epoch_{}.pt'.format(model_architecture, epoch+1))
+    torch.save(state, cfg.MODEL_CHECKPOINT_PATH.format(epoch+1))
 
 
 # training done
