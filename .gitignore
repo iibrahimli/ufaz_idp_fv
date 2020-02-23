@@ -2,3 +2,5 @@
 __pycache__/
 data/
 .venv/
+*.pt
+training_log.txt
