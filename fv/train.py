@@ -80,7 +80,7 @@ margin = cfg.TRIPLET_MARGIN
 loss = triplet_loss(margin=margin)
 
 
-print("Training using on {} triplets for {} epochs".format(
+print("Training on {} triplets for {} epochs".format(
     cfg.N_TRAIN_TRIPLETS,
     cfg.N_EPOCHS - start_epoch))
 
